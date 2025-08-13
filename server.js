@@ -1,6 +1,8 @@
 import express from "express";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 app.use(express.json());
@@ -12,7 +14,7 @@ app.post("/carrier_service", async (req, res) => {
         const dest = rate.destination
         const origin = rate.origin
 
-        if (!dest || dest.coutry !== "US") {
+        if (!dest || dest.country !== "US") {
             return res.json({ rates: [] });
         }
 
@@ -82,4 +84,6 @@ app.post("/carrier_service", async (req, res) => {
 })
 
 
-export default app
+app.listen(process.env.PORT, () => {
+    console.log(`Carrier service listening on port ${process.env.PORT}`)
+})
