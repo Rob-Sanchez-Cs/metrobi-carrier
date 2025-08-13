@@ -84,6 +84,4 @@ app.post("/carrier_service", async (req, res) => {
 })
 
 
-app.listen(process.env.PORT, () => {
-    console.log(`Carrier service listening on port ${process.env.PORT}`)
-})
+export default app
