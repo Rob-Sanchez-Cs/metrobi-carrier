@@ -48,7 +48,17 @@ app.post("/carrier_service", async (req, res) => {
         clearTimeout(t);
 
         if (!metrobiResp.ok) {
-            return res.status(404).send("Metrobi quote unavailable")
+            return res.json({
+                rates: [
+                  {
+                    service_name: "⚠️ Metrobi Delivery - Temporarily Unavailable",
+                    service_code: "METROBI_UNAVAILABLE",
+                    total_price: "999900", // $0 but looks like a message
+                    currency: "USD",
+                    description: "Metrobi could not calculate delivery for this address"
+                  }
+                ]
+              });
         }
 
         
@@ -56,13 +66,33 @@ app.post("/carrier_service", async (req, res) => {
         const metrobiData = await metrobiResp.json();
 
         if (!metrobiData.success) {
-            throw new Error(`Metrobi API error: ${metrobiData.response.message}`)
+            return res.json({
+                rates: [
+                  {
+                    service_name: "⚠️ Metrobi Delivery - Temporarily Unavailable",
+                    service_code: "METROBI_UNAVAILABLE",
+                    total_price: "999900", // $0 but looks like a message
+                    currency: "USD",
+                    description: "Metrobi could not calculate delivery for this address"
+                  }
+                ]
+              });
         }
 
         const estimatedCost = metrobiData.response.data.price
 
         if (typeof estimatedCost !== "number"){
-            throw new Error("Invalid cost returned from Metrobi API")
+            return res.json({
+                rates: [
+                  {
+                    service_name: "⚠️ Metrobi Delivery - Temporarily Unavailable",
+                    service_code: "METROBI_UNAVAILABLE",
+                    total_price: "999900", // $0 but looks like a message
+                    currency: "USD",
+                    description: "Metrobi could not calculate delivery for this address"
+                  }
+                ]
+              });
         }
 
         return res.json({
@@ -80,6 +110,17 @@ app.post("/carrier_service", async (req, res) => {
 
     } catch (error) {
         console.error("Carrier service error:", error);
+        return res.json({
+            rates: [
+              {
+                service_name: "⚠️ Metrobi Delivery - Temporarily Unavailable",
+                service_code: "METROBI_UNAVAILABLE",
+                total_price: "999900", // $0 but looks like a message
+                currency: "USD",
+                description: "Metrobi could not calculate delivery for this address"
+              }
+            ]
+          });
     }
 })
 
